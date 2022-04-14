@@ -22,6 +22,10 @@ fn main() {
     let result = operate(operator, first_num, second_num);
     println!("5) Result: {:?}", result);
     
+    println!("6) {:?}", output(first_num, operator, second_num, result));
+
+    let result2 = operate_using_match(operator, first_num, second_num);
+    println!("7) {:?}", output(first_num, operator, second_num, result2));
 }
 
 
@@ -38,4 +42,18 @@ fn operate(operator: char, first_number: f32, second_number: f32) -> f32{
         println!("hello");
         return 0.0;
     }
+}
+
+fn operate_using_match(operator: char, first_number: f32, second_number: f32) -> f32{
+    match operator{
+        '+' => first_number + second_number,
+        '-' => first_number - second_number,
+        '*' => first_number * second_number,
+        '/' => first_number / second_number,
+        _ => panic!("Invalid operator used!!")
+    }
+}
+
+fn output(first_number: f32, operator: char ,second_number: f32, result: f32) -> String{
+    return format!("{} {} {} = {}", first_number, operator, second_number, result);
 }
