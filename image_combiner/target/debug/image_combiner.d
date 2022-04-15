@@ -1,0 +1,1 @@
+C:\Users\tanis\VScode\ projects\rust_programming\image_combiner\target\debug\image_combiner.exe: C:\Users\tanis\VScode\ projects\rust_programming\image_combiner\src\args.rs C:\Users\tanis\VScode\ projects\rust_programming\image_combiner\src\main.rs
