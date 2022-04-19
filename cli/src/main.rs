@@ -32,10 +32,45 @@ fn run_interpreter(){
                 else if command.starts_with("cd"){ 
                     let command_items: Vec<&str> = command.split(" ").collect();
                     let location: &str = command_items[1];
-                    if directories.contains(&location){
-                        // or we can have a different loop systems for each type of command, enums can be used.
-                    }else{
-                        println!("Invalid Command. Use 'help' for more information about commands.")
+                    // or we can have a different loop systems for each type of command, enums can be used.
+                    match location{
+                        "education" => {
+                            let result = execute_education(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        "experience" => {
+                            let result = execute_experience(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        "social" => {
+                            let result = execute_social(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        "skills" => {
+                            let result = execute_skills(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        "projects" => {
+                            let result = execute_projects(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        "about" => {
+                            let result = execute_about(&base_directory);
+                            if result{
+                                break
+                            }
+                        },
+                        _ => println!("Invalid Command. Use 'help' for more information about commands.")
                     }
                 }
                 else { println!("Invalid Command. Use 'help' for more information about commands.") }
@@ -47,4 +82,53 @@ fn run_interpreter(){
 
 fn display_help(){
     println!("These are all the commands and help you need ok!")
+}
+
+fn execute_education(base_directory: &String) -> bool{
+    let current_directory: String = base_directory.clone() + "\\education";
+    loop{
+        let mut input: String = String::new();
+        print!("{}>", current_directory);
+        io::stdout().flush().unwrap();
+        match io::stdin().read_line(&mut input){
+            Ok(_ok) => {
+                let cmdlet = input.trim();
+                match cmdlet{
+                    "help" => display_help(),
+                    "quit" => {
+                        return true;
+                    },
+                    "cd .." => {
+                        return false;
+                    }
+                    "SSC" => println!("This is SSC"),
+                    "HSC" => println!("This is HSC"),
+                    "current" => println!("This is current"),
+                    _ => println!("Invalid command.")
+                }
+            },
+            Err(e) => println!("There was an error {}", e)
+        }
+    }
+}
+
+
+fn execute_experience(base_directory: &String) -> bool{
+    true
+}
+
+fn execute_social(base_directory: &String) -> bool{
+    true
+}
+
+fn execute_skills(base_directory: &String) -> bool{
+    true
+}
+
+fn execute_projects(base_directory: &String) -> bool{
+    true
+}
+
+fn execute_about(base_directory: &String) -> bool{
+    true
 }
