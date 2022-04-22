@@ -1,5 +1,6 @@
 use std::io;
 use std::io::Write;
+use std::collections::HashMap;
 // help, education, experiences, social, tech stack, projects, about me
 
 // "education" => some_func(),
@@ -82,6 +83,38 @@ fn run_interpreter(){
 
 fn display_help(){
     println!("These are all the commands and help you need ok!")
+}
+
+fn generate_dynamic(){
+    let mut intial_commands: HashMap<String, Vec<String>> = HashMap::new();
+    intial_commands.insert(String::from("education"), vec![String::from("SSC"), String::from("HSC"), String::from("current")]);
+    intial_commands.insert(String::from("experience"), vec![String::from("Experience 1"), String::from("Experience 2"), String::from("Experience 3")]);
+    intial_commands.insert(String::from("social"), vec![String::from("github"), String::from("linkedIn"), String::from("email")]);
+    intial_commands.insert(String::from("skills"), vec![String::from("Skill 1"), String::from("Skill 2"), String::from("Skill 3")]);
+    intial_commands.insert(String::from("projects"), vec![String::from("Project 1"), String::from("Project 2"), String::from("Project 3")]);
+    intial_commands.insert(String::from("about"), vec![]);
+    
+    let input: String = String::from("help");
+    if intial_commands.contains_key(&input){
+        match intial_commands.get(&input){
+            Some(value) => {
+                let result = execute_dynamic(input, value);
+                // if result{ break }
+            }
+            None => {
+                println!("Nothing found here")
+            }
+        }
+        
+    }
+    else{
+        println!("Invalid command");
+    }
+}
+
+
+fn execute_dynamic(current: String, commands: &Vec<String>) -> bool{
+    true
 }
 
 fn execute_education(base_directory: &String) -> bool{
