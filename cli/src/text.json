@@ -1,0 +1,29 @@
+{
+    "education": {
+        "SSC": "This is SSC",
+        "HSC": "This is HSC",
+        "current": "This is current"
+    },
+    "social": {
+        "github": "github",
+        "linkedIn": "linkedIn",
+        "email": "email"
+    },
+    "experience": {
+        "experience1": "Experience 1",
+        "experience2": "Experience 2",
+        "experience3": "Experience 3"
+    },
+    "projects": {
+        "project1":"project1",
+        "project2":"project2",
+        "project3":"project3"
+    },
+    "skills": {
+        "skill1":"skill1",
+        "skill2":"skill2",
+        "skill3":"skill3"
+    },
+    "about": "About"
+
+}

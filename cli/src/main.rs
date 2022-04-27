@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
 use std::collections::HashMap;
+use std::fs;
 // help, education, experiences, social, tech stack, projects, about me
 
 // "education" => some_func(),
@@ -15,7 +16,8 @@ use std::collections::HashMap;
 // Popping the stack on cd ..
 
 fn main() {
-    run_interpreter();
+    // run_interpreter();
+    generate_dynamic();
 }
 
 fn run_interpreter(){
@@ -86,19 +88,26 @@ fn display_help(){
 }
 
 fn generate_dynamic(){
-    let mut intial_commands: HashMap<String, Vec<String>> = HashMap::new();
-    intial_commands.insert(String::from("education"), vec![String::from("SSC"), String::from("HSC"), String::from("current")]);
-    intial_commands.insert(String::from("experience"), vec![String::from("Experience 1"), String::from("Experience 2"), String::from("Experience 3")]);
-    intial_commands.insert(String::from("social"), vec![String::from("github"), String::from("linkedIn"), String::from("email")]);
-    intial_commands.insert(String::from("skills"), vec![String::from("Skill 1"), String::from("Skill 2"), String::from("Skill 3")]);
-    intial_commands.insert(String::from("projects"), vec![String::from("Project 1"), String::from("Project 2"), String::from("Project 3")]);
-    intial_commands.insert(String::from("about"), vec![]);
+    let file = fs::File::open("src/text.json")
+    .expect("file should open read only");
+    let json: serde_json::Value = serde_json::from_reader(file)
+    .expect("file should be proper JSON");
     
-    let input: String = String::from("help");
+
+    let mut intial_commands: HashMap<String, HashMap<String, String>> = HashMap::new();
+    let mut temp: HashMap<String, String> = HashMap::new();
+    temp.insert(String::from("SSC"), String::from("This is SSC"));
+    temp.insert(String::from("HSC"), String::from("This is HSC"));
+    temp.insert(String::from("current"), String::from("This is Current"));
+
+    intial_commands.insert(String::from("education"), temp);
+ 
+    
+    let input: String = String::from("skills");
     if intial_commands.contains_key(&input){
         match intial_commands.get(&input){
             Some(value) => {
-                let result = execute_dynamic(input, value);
+                let result = execute_dynamic(String::from("C:\\portfolio\\tanishq"),input, value);
                 // if result{ break }
             }
             None => {
@@ -113,7 +122,12 @@ fn generate_dynamic(){
 }
 
 
-fn execute_dynamic(current: String, commands: &Vec<String>) -> bool{
+fn execute_dynamic(base_url: String, current: String, commands: &HashMap<String, String>) -> bool{
+    println!("{}\\{}>", base_url, current);
+    println!("{:?}", commands);
+    let input: String = String::from("Skill 1");
+    println!("{}", commands.contains_key(&input));
+
     true
 }
 
