@@ -6,13 +6,13 @@ use std::collections::HashMap;
 
 fn main() {
     let base_directory: String = String::from("C:\\Users\\tanis\\");
+    let mut final_projects_list: Vec<HashMap<String, String>> = vec![];
     let project_directories: Vec<String> = vec![String::from("PycharmProject"), String::from("StudioProjects"), String::from("VScode projects"), ];
     for directory in project_directories{
         for file in fs::read_dir(base_directory.clone()+&directory).unwrap(){
             let mut langs: HashMap<String, u16> = HashMap::new();
             let path: PathBuf = file.unwrap().path();
             let string_path: String = path.display().to_string();
-            println!("{}", path.display());
             iterate_files(string_path, &mut langs);
             let mut max_name: String = String::new(); 
             let mut max_points: u16 = 0;
@@ -22,23 +22,15 @@ fn main() {
                     max_name = language.clone();
                 }
             }
-            println!("{} {}", max_name, max_points);
+            let new_project: HashMap<String, String> = HashMap::from([
+                (path.display().to_string(), max_name)
+            ]);
+            final_projects_list.push(new_project);
         }
     }
-    
-    
-    // iterate_files(String::from("C:\\Users\\tanis\\PycharmProject\\ChatRoom"), &mut langs);
-    // let mut max_name: String = String::new(); 
-    // let mut max_points: u16 = 0;
 
-    // for (language, points) in &langs{
-    //     if *points > max_points{
-    //         max_points = *points;
-    //         max_name = language.clone();
-    //     }
-    // }
-
-    // println!("{} {}", max_name, max_points);
+    println!("{:?}", final_projects_list);
+    println!("{}", final_projects_list.len());
 }
 
 fn is_safe_to_iterate(filename: &std::ffi::OsStr) -> bool{
