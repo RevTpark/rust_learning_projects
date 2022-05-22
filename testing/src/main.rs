@@ -1,46 +1,90 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::ffi::OsStr;
 use regex::Regex;
+use std::collections::HashMap;
 
 fn main() {
     let base_directory: String = String::from("C:\\Users\\tanis\\");
-    let project_directories: Vec<String> = vec![String::from("PycharmProject"), String::from("VScode projects"), String::from("StudioProjects")];
+    let project_directories: Vec<String> = vec![String::from("PycharmProject"), String::from("StudioProjects"), String::from("VScode projects"), ];
     for directory in project_directories{
         for file in fs::read_dir(base_directory.clone()+&directory).unwrap(){
-        println!("{}", file.unwrap().path().display());
+            let mut langs: HashMap<String, u16> = HashMap::new();
+            let path: PathBuf = file.unwrap().path();
+            let string_path: String = path.display().to_string();
+            println!("{}", path.display());
+            iterate_files(string_path, &mut langs);
+            let mut max_name: String = String::new(); 
+            let mut max_points: u16 = 0;
+            for (language, points) in &langs{
+                if *points > max_points{
+                    max_points = *points;
+                    max_name = language.clone();
+                }
+            }
+            println!("{} {}", max_name, max_points);
         }
     }
     
-    for files in fs::read_dir(base_directory.clone()+"PycharmProject\\ChatRoom\\backend").unwrap(){
-        let path = files.unwrap().path();
-        let ext = Path::new(&path).extension().and_then(OsStr::to_str);
-        println!("{:?}", ext);
-    }
+    
+    // iterate_files(String::from("C:\\Users\\tanis\\PycharmProject\\ChatRoom"), &mut langs);
+    // let mut max_name: String = String::new(); 
+    // let mut max_points: u16 = 0;
 
-    iterate_files(String::from("C:\\Users\\tanis\\PycharmProject\\ChatRoom"));
+    // for (language, points) in &langs{
+    //     if *points > max_points{
+    //         max_points = *points;
+    //         max_name = language.clone();
+    //     }
+    // }
+
+    // println!("{} {}", max_name, max_points);
 }
 
 fn is_safe_to_iterate(filename: &std::ffi::OsStr) -> bool{
+    let restricted: Vec<&str> = vec!["andriod", "build", "ios", "target", "ckeditor", "material-dashboard", "node_modules", "venv", "__pycache__", "migrations"];
     let reg: Regex = Regex::new(r"^\.").unwrap();
-    reg.is_match(&filename.to_str().unwrap()) || filename == "venv" || filename == "__pycache__" || filename == "migrations"
+    reg.is_match(&filename.to_str().unwrap()) || restricted.contains(&filename.to_str().unwrap())
 }
 
-fn iterate_files(path: String){
-    for file in fs::read_dir(path).unwrap(){
-        let path = file.unwrap().path();
-        let string_path = path.display().to_string();
-        let temp = Path::new(&string_path).file_name().unwrap();
-        if is_safe_to_iterate(temp){
-            continue;
-        }
+fn iterate_files(path: String, langs: &mut HashMap<String, u16>){
+    let files = fs::read_dir(&path);
+    match &files{
+        Ok(_) => {
+            for file in files.unwrap(){
+                let path: PathBuf = file.unwrap().path();
+                let string_path: String = path.display().to_string();
+                let temp = Path::new(&string_path).file_name().unwrap();
+                if is_safe_to_iterate(temp){
+                    continue;
+                }
+                
+                match Path::new(&path).extension().and_then(OsStr::to_str){
+                    None => {
+                        iterate_files(string_path, langs);
+                        continue;
+                    },
+                    Some(text) => {
+                        let ext: &str = text;
+                        let allowed_exts: Vec<&str> = vec!["png", "jpeg", "jpg", "class", "json", "exe", "pdf"];
+                        if !allowed_exts.contains(&ext){
+                            if langs.contains_key(ext){
+                                let counter = langs.entry(String::from(ext)).or_insert(0);
+                                *counter += 1;
+                            }
+                            else{
+                                langs.insert(String::from(ext), 1);
+                            }
+                        }
+                        
+                    }
+                }
 
-        let ext = Path::new(&path).extension().and_then(OsStr::to_str);
-        if ext == None{
-            iterate_files(string_path);
-            continue;
-        }
-
-        println!("{}", path.display());
+                // println!("{}", path.display());
+            }
+        },
+        Err(_) => {
+            // println!("Illegal File Encountered booom!! {}", path);
+        },
     }
 }
