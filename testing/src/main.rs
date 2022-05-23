@@ -3,11 +3,30 @@ use std::path::{Path, PathBuf};
 use std::ffi::OsStr;
 use regex::Regex;
 use std::collections::HashMap;
+mod constants;
+use constants::GlobalConstants;
 
-fn main() {
-    let base_directory: String = String::from("C:\\Users\\tanis\\");
-    let mut final_projects_list: Vec<HashMap<String, String>> = vec![];
-    let project_directories: Vec<String> = vec![String::from("PycharmProject"), String::from("StudioProjects"), String::from("VScode projects"), ];
+fn main(){
+    search_files("al");
+}
+
+fn search_files(query: &str){
+    let project_map: Vec<HashMap<u16, String>> = iterate_over_files();
+    let mut filtered_projects: Vec<HashMap<u16, String>> = vec![];
+    let reg: Regex = Regex::new(&format!(r"(?i:^.*{}.*$)", query)).unwrap();
+    for projects in project_map{
+        if reg.is_match(projects.get(&2).unwrap()){
+            filtered_projects.push(projects);
+        }
+    }
+    println!("{:?}", filtered_projects);
+}
+
+
+fn iterate_over_files() -> Vec<HashMap<u16, String>>{
+    let base_directory: String = GlobalConstants::new().base_directory;
+    let mut final_projects_list: Vec<HashMap<u16, String>> = vec![];
+    let project_directories: Vec<String> = GlobalConstants::new().project_directories;
     for directory in project_directories{
         for file in fs::read_dir(base_directory.clone()+&directory).unwrap(){
             let mut langs: HashMap<String, u16> = HashMap::new();
@@ -22,15 +41,18 @@ fn main() {
                     max_name = language.clone();
                 }
             }
-            let new_project: HashMap<String, String> = HashMap::from([
-                (path.display().to_string(), max_name)
+            let new_project: HashMap<u16, String> = HashMap::from([
+                (0, path.display().to_string()),
+                (1, max_name),
+                (2, path.file_name().unwrap().to_str().unwrap().to_string())
             ]);
             final_projects_list.push(new_project);
         }
     }
 
-    println!("{:?}", final_projects_list);
-    println!("{}", final_projects_list.len());
+    // println!("{:?}", final_projects_list);
+    // println!("{}", final_projects_list.len());
+    return final_projects_list;
 }
 
 fn is_safe_to_iterate(filename: &std::ffi::OsStr) -> bool{
